@@ -27,34 +27,14 @@ interface CourseRow {
   description: string;
 }
 
-// Временно закомментировано подключение к БД
-/*
-const pool = new Pool({
-  user: process.env.DB_USER,      // Имя пользователя БД
-  host: process.env.DB_HOST,      // Адрес сервера БД
-  database: process.env.DB_NAME,  // Имя базы данных
-  password: process.env.DB_PASSWORD, // Пароль пользователя
-  port: parseInt(process.env.DB_PORT || '5432'),      // Порт подключения (обычно 5432)
-});
-
-// Проверка подключения
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Ошибка подключения к БД:', err);
-  } else {
-    console.log('БД подключена успешно');
-  }
-});
-*/
-
-// Временный мок объекта pool с поддержкой типов
+// Create a mock pool for development/testing
 const pool = {
   query: async (text: string, params?: any[]): Promise<{ rows: any[] }> => {
-    // Мок для SELECT NOW()
+    // Mock for SELECT NOW()
     if (text === 'SELECT NOW()') {
       return { rows: [{ now: new Date().toISOString() }] };
     }
-    // Мок для проверки пользователя
+    // Mock for checking user
     if (text.includes('SELECT * FROM users WHERE')) {
       return { rows: [{
         id: 1,
@@ -63,7 +43,7 @@ const pool = {
         password: 'hashed_password'
       }] };
     }
-    // Мок для создания пользователя
+    // Mock for creating user
     if (text.includes('INSERT INTO users')) {
       const [username, email] = params || [];
       return { 
@@ -75,7 +55,7 @@ const pool = {
         }]
       };
     }
-    // Мок для получения данных пользователя
+    // Mock for getting user data
     if (text.includes('SELECT id, username, email FROM users')) {
       return { 
         rows: [{ 
@@ -85,7 +65,7 @@ const pool = {
         }]
       };
     }
-    // Мок для получения курса
+    // Mock for getting course
     if (text.includes('SELECT * FROM courses')) {
       return { 
         rows: [{ 
@@ -95,7 +75,7 @@ const pool = {
         }]
       };
     }
-    // Дефолтный ответ
+    // Default response
     return { rows: [] };
   }
 };
