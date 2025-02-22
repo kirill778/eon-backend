@@ -11,8 +11,16 @@ const app = express();
 // Настройка CORS
 app.use(cors({
   origin: function(origin, callback) {
-    // В режиме разработки разрешаем все источники
-    callback(null, true);
+    const allowedOrigins = [
+      'https://eon-app-pi.vercel.app',
+      'http://localhost:3000',
+      'http://192.168.1.4:3000'
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
